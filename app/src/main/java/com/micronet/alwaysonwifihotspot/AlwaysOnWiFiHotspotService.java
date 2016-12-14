@@ -8,7 +8,10 @@ import android.content.IntentFilter;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.util.Log;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by brigham.diaz on 12/12/2016.
@@ -51,6 +54,10 @@ public class AlwaysOnWiFiHotspotService extends Service {
      *  set post for 10 seconds
      */
     private Handler wifiApHandler;
+    private int wifiApvalue;
+    private final long SIXTY_SECONDS = 60000;
+    private final long TEN_SECONDS = 10000;
+    private Context context;
 
     @Override
     public void onCreate() {
@@ -58,8 +65,55 @@ public class AlwaysOnWiFiHotspotService extends Service {
         IntentFilter intentFilter = new IntentFilter(WiFiApManager.WIFI_AP_STATE_CHANGED_ACTION);
         registerReceiver(wifiApStatusReceiver, intentFilter);
         // TODO: create handler and call post
+        context=this;
+        if (wifiApHandler == null) {
+            wifiApHandler = new Handler(Looper.myLooper());
+            wifiApHandler.post(wifiApCheck);
+        }
+
     }
 
+    final Runnable wifiApCheck = new Runnable() {
+        @Override
+        public void run() {
+            wifiApvalue= WiFiApManager.getWifiApState(context);
+
+            try {
+                switch (wifiApvalue){
+                    case WiFiApManager.WIFI_AP_STATE_DISABLING: //WiFi AP is currently disabling
+                        //Doing Nothing and Setting post to 10s
+                        wifiApHandler.postDelayed(this,TEN_SECONDS);
+                    case WiFiApManager.WIFI_AP_STATE_DISABLED: //WiFi AP is currently disabled
+                        //Re-enable the WiFi Hotspot state
+                         WiFiApManager.setWiFiApState(context, true);
+                           /* WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+                            wifi.setWifiEnabled(true);*/ //To disable Wi-Fi
+                        //Seting post to 60s
+                        wifiApHandler.postDelayed(this,SIXTY_SECONDS);
+                        break;
+                    case WiFiApManager.WIFI_AP_STATE_ENABLING: //Wifi AP is currently enabling
+                        //Do nothing Setting post to 10s
+                        wifiApHandler.postDelayed(this,TEN_SECONDS);
+                        break;
+                    case WiFiApManager.WIFI_AP_STATE_ENABLED:// WiFi AP is currently enabled
+                        // Do nothing
+                        wifiApHandler.postDelayed(this,SIXTY_SECONDS);
+                        break ;
+                    case WiFiApManager.WIFI_AP_STATE_FAILED://WiFi Ap failed
+                        // Re enable the WiFi Hotspot state
+                        WiFiApManager.setWiFiApState(context, true);
+                        wifiApHandler.postDelayed(this,SIXTY_SECONDS);
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch( Exception e) {
+                Log.d(TAG, "run: bh");
+            }
+            wifiApHandler.postDelayed(this, 60000);
+        }
+    };
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         return super.onStartCommand(intent, flags, startId);

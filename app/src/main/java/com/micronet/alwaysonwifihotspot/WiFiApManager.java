@@ -11,6 +11,23 @@ import java.lang.reflect.Method;
  *
  */
 public class WiFiApManager {
+
+  /*  private static Method getWifiApStateMethod;
+    private static Method isWifiApEnabledMethod;
+
+    static {
+        for (Method method : WifiManager.class.getDeclaredMethods()) {
+            switch (method.getName()) {
+
+                case "getWifiApState":
+                    getWifiApStateMethod = method;
+                    break;
+                case "isWifiApEnabled":
+                    isWifiApEnabledMethod = method;
+                    break;
+            }
+        }
+    }*/
     /* Wifi AP values and intent string from obc_android SDK */
     public static final int WIFI_AP_STATE_DISABLING = 10; // Wi-Fi AP is currently being disabled. The state will change to WIFI_AP_STATE_DISABLED if it finishes successfully.
     public static final int WIFI_AP_STATE_DISABLED = 11; // Wi-Fi AP is disabled.
@@ -22,18 +39,23 @@ public class WiFiApManager {
     public static final String WIFI_AP_STATE_CHANGED_ACTION = "android.net.wifi.WIFI_AP_STATE_CHANGED";
 
 
-    public static boolean isWiFiApOn(Context context) {
+    public static int getWifiApState(Context context) {
         WifiManager wifiManager = (WifiManager) context.getSystemService(context.WIFI_SERVICE);
-
+        WifiConfiguration wificonfiguration = null;
         try {
+//            if(getWifiApState(context)) {
+//                wifiManager.setWifiEnabled(false);
+//            }
             // access isWifiApEnabled method by reflection
-            Method isWifiApEnabledMethod = wifiManager.getClass().getDeclaredMethod("isWifiApEnabled");
+            Method isWifiApEnabledMethod = wifiManager.getClass().getDeclaredMethod("getWifiApState");
             isWifiApEnabledMethod.setAccessible(true);
-            return (Boolean) isWifiApEnabledMethod.invoke(wifiManager);
-        } catch (Throwable throwable) {
+            int isWifiAponvalue= (Integer) isWifiApEnabledMethod.invoke(wifiManager);
+            return isWifiAponvalue;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
-        return false;
+        return WIFI_AP_STATE_FAILED;
     }
 
 
@@ -67,7 +89,6 @@ public class WiFiApManager {
             // SystemAPI: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/wifi/java/android/net/wifi/WifiManager.java
 
             // 2. TODO: turn off WiFi before enabling hotspot
-
             // using reflection to get method access for getWifiApConfiguration and setWifiApEnabled
             Method getWifiApMethod = wifiManager.getClass().getDeclaredMethod("getWifiApConfiguration");
             getWifiApMethod.setAccessible(true);
