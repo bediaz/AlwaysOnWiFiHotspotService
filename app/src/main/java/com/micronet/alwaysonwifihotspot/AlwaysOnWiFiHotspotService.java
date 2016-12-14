@@ -28,6 +28,7 @@ public class AlwaysOnWiFiHotspotService extends Service {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             // first make sure that action received is wifi ap
+
             if (WiFiApManager.WIFI_AP_STATE_CHANGED_ACTION.equals(action)) {
                 // get Wi-Fi Hotspot state
                 int state = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, WiFiApManager.WIFI_AP_STATE_FAILED);
@@ -64,11 +65,10 @@ public class AlwaysOnWiFiHotspotService extends Service {
         // The service is being created
         IntentFilter intentFilter = new IntentFilter(WiFiApManager.WIFI_AP_STATE_CHANGED_ACTION);
         registerReceiver(wifiApStatusReceiver, intentFilter);
-        // TODO: create handler and call post
         context=this;
         if (wifiApHandler == null) {
             wifiApHandler = new Handler(Looper.myLooper());
-            wifiApHandler.post(wifiApCheck);
+            wifiApHandler.post(wifiApCheck) ;
         }
 
     }

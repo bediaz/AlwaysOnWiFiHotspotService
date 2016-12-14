@@ -3,6 +3,7 @@ package com.micronet.alwaysonwifihotspot;
 import android.content.Context;
 import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
+import android.util.Log;
 
 import java.lang.reflect.Method;
 
@@ -83,12 +84,10 @@ public class WiFiApManager {
 
         try {
             WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
-            // 1. TODO: first check Wifi AP state and do not repeat action of current state,
-            // i.e. do not turn on AP if it's already enabled and do not turn off AP if it's already disabled
-            // Will need to use reflection to call isWifiApEnabled or getWifiApState and check against WIFI_AP_STATE_XXXXX
-            // SystemAPI: https://android.googlesource.com/platform/frameworks/base/+/refs/heads/master/wifi/java/android/net/wifi/WifiManager.java
+            // Wifi Enabled doesn't work on normal apps
+            //boolean wifienabled= wifiManager.setWifiEnabled(true);
+            // Log.d("WifiEnabled","setWiFiState: "+wifienabled);
 
-            // 2. TODO: turn off WiFi before enabling hotspot
             // using reflection to get method access for getWifiApConfiguration and setWifiApEnabled
             Method getWifiApMethod = wifiManager.getClass().getDeclaredMethod("getWifiApConfiguration");
             getWifiApMethod.setAccessible(true);
