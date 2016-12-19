@@ -95,7 +95,7 @@ public class AlwaysOnWiFiHotspotService extends Service {
     //Write function
     public void writeToFile(String handlerValue, Context context){
 
-            File file = new File(Dir, "HandlerCountValue.txt"); //Created a Text File
+            File file = new File(Dir, "HotspotEnableCount.txt"); //Created a Text File
             try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 fileOutputStream.write(handlerValue.getBytes());
@@ -109,7 +109,7 @@ public class AlwaysOnWiFiHotspotService extends Service {
     private String readFromFile(Context context) {
 
         String ret = "";
-        File file = new File(Dir, "HandlerCountValue.txt"); //Created a Text File
+        File file = new File(Dir, "HotspotEnableCount.txt"); //Created a Text File
         if(!file.exists()) { return ret;}
         try {
             FileReader fileReader = new FileReader(file);
@@ -145,7 +145,7 @@ public class AlwaysOnWiFiHotspotService extends Service {
         //Creating a Directory if it isn't available
         if (Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             File Root = Environment.getExternalStorageDirectory(); //Creating File Storage
-            Dir = new File(Root.getAbsolutePath() + "/HandlerCount");
+            Dir = new File(Root.getAbsolutePath() + "/MicronetService");
             if (!Dir.exists()) {
                 Dir.mkdir();
             }
