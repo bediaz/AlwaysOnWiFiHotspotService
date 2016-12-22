@@ -95,8 +95,11 @@ public class AlwaysOnWiFiHotspotService extends Service {
     //Write function
     public void writeToFile(String handlerValue, Context context){
 
-            File file = new File(Dir, "HotspotEnableCount.txt"); //Created a Text File
-            try {
+        File file = new File(Dir, "HotspotEnabledCount.txt"); //Created a Text File
+             if(!file.exists()) {
+                 handlerValue = "0";
+             }
+        try {
                 FileOutputStream fileOutputStream = new FileOutputStream(file);
                 fileOutputStream.write(handlerValue.getBytes());
                 fileOutputStream.close();
