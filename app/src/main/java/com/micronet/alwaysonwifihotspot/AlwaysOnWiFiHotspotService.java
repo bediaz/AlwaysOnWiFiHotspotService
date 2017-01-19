@@ -71,7 +71,11 @@ public class AlwaysOnWiFiHotspotService extends Service {
 
     private void enableWiFi(){
         // re-enable Wifi AP
-        WiFiApManager.setWiFiApState(context, true);
+        Utils.isAirplaneMode(getContentResolver());
+
+        if(Utils.isAirplaneMode(getContentResolver())==false)
+        {
+            WiFiApManager.setWiFiApState(context, true);
         try {
             Thread.sleep(1000);
         } catch (InterruptedException e) {
@@ -84,6 +88,9 @@ public class AlwaysOnWiFiHotspotService extends Service {
             increaseHC();
             Log.d(TAG, "enableWififunc:" +handlerValue);
         }
+        }
+        else
+            Log.d(TAG,"Airplane mode is On, Cant disable");
     }
     //Function that increases th handler count
     private void increaseHC(){
@@ -176,7 +183,7 @@ public class AlwaysOnWiFiHotspotService extends Service {
                         //Doing Nothing and Setting post to 10s
                         wifiApHandler.postDelayed(this, TEN_SECONDS);
                     case WiFiApManager.WIFI_AP_STATE_DISABLED: //WiFi AP is currently disabled
-                        //Re-enable the WiFi Hotspot state
+                        //Re-enable the WiFi Hotspot state if Airplane Mode is Off
                             enableWiFi();
                         /* WifiManager wifi = (WifiManager) getSystemService(Context.WIFI_SERVICE);
                            wifi.setWifiEnabled(true);*/ //To disable Wi-Fi
@@ -191,9 +198,9 @@ public class AlwaysOnWiFiHotspotService extends Service {
                         // Do nothing
                         wifiApHandler.postDelayed(this, SIXTY_SECONDS);
                         break;
-                    case WiFiApManager.WIFI_AP_STATE_FAILED://WiFi Ap failed
-                        // Re enable the WiFi Hotspot state
-                       enableWiFi();
+                    case WiFiApManager.WIFI_AP_STATE_FAILED://WiFi AP failed
+                        // Re enable the WiFi Hotspot state if airplane mode is off
+                        enableWiFi();
                         wifiApHandler.postDelayed(this, SIXTY_SECONDS);
                         break;
                     default:
