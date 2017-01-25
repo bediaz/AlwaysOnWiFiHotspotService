@@ -92,6 +92,16 @@ public class AlwaysOnWiFiHotspotService extends Service {
         } else {
             Log.d(TAG, "Airplane mode is On, Cant disable");
         }
+        Log.d(this.toString(), "getWiFiApState=" + WiFiApManager.getWifiApState(context));
+        if(WiFiApManager.getWifiApState(context)==WiFiApManager.WIFI_AP_STATE_ENABLED
+                ||WiFiApManager.getWifiApState(context)==WiFiApManager.WIFI_AP_STATE_ENABLING )
+        {
+            increaseHC();
+            Log.d(TAG, "enableWififunc:" +handlerValue);
+        }
+        }
+        else
+            Log.d(TAG,"Airplane mode is On, Cant enable");
     }
     //Function that increases th handler count
     private void increaseHC(){
