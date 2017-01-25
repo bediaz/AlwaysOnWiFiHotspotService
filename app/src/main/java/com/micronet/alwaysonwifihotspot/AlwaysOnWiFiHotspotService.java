@@ -90,7 +90,7 @@ public class AlwaysOnWiFiHotspotService extends Service {
         }
         }
         else
-            Log.d(TAG,"Airplane mode is On, Cant disable");
+            Log.d(TAG,"Airplane mode is On, Cant enable");
     }
     //Function that increases th handler count
     private void increaseHC(){
