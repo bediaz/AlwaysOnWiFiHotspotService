@@ -96,9 +96,9 @@ public class AlwaysOnWiFiHotspotService extends Service {
             increaseHC();
             Log.d(TAG, "enableWififunc:" +handlerValue);
         }
+        else {
+            Log.d(TAG, "Airplane mode is On, Cant enable");
         }
-        else
-            Log.d(TAG,"Airplane mode is On, Cant enable");
     }
     //Function that increases th handler count
     private void increaseHC(){
